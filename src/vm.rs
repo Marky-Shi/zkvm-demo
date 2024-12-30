@@ -76,6 +76,14 @@ impl VM {
         Ok(())
     }
 
+    /// Runs an opcode on the top two values of the stack
+    ///
+    /// `opcode` is the operation to perform on the top two values.
+    /// `sub_opcode` is an optional secondary operation to perform on the top two values.
+    /// The result of the `sub_opcode` is stored in the `extra_data` field of the `VMState`.
+    ///
+    /// The top two values are popped from the stack and replaced with the result of the `opcode`.
+    /// The `extra_data` value is pushed onto the stack as the new top value.
     fn run_opcode<F, G>(&mut self, opcode: F, sub_opcode: Option<G>) -> Result<Mersenne31, String>
     where
         F: Fn(Mersenne31, Mersenne31) -> Mersenne31,
@@ -98,6 +106,10 @@ impl VM {
         self.stack[0] = result;
         self.stack[3] = Mersenne31::ZERO;
         Ok(extra_data)
+    }
+
+    pub fn get_stack(&self) -> [Mersenne31; 4] {
+        self.stack
     }
 
     pub fn get_trace(&self) -> Vec<[Mersenne31; 11]> {
